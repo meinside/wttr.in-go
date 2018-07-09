@@ -49,7 +49,11 @@ func httpGet(url string, asHTML bool) (result string, err error) {
 
 			var body []byte
 			if body, err = ioutil.ReadAll(resp.Body); err == nil {
-				return stripansi.Strip(string(body)), nil
+				if !asHTML {
+					return stripansi.Strip(string(body)), nil
+				}
+
+				return string(body), nil
 			}
 		}
 	}
