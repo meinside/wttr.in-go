@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/acarl005/stripansi"
 )
@@ -12,6 +13,8 @@ const (
 	baseURL = "https://wttr.in/"
 
 	curlUserAgent = "curl/7.54.0"
+
+	httpTimeoutSeconds = 10
 )
 
 // WeathersText returns weathers for 3 days in plain text
@@ -35,7 +38,9 @@ func WeatherHTMLForToday(place string) (result string, err error) {
 }
 
 func httpGet(url string, asHTML bool) (result string, err error) {
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: httpTimeoutSeconds * time.Second,
+	}
 	var req *http.Request
 
 	if req, err = http.NewRequest("GET", url, nil); err == nil {
