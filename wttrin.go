@@ -2,6 +2,7 @@ package wttrin
 
 import (
 	"io/ioutil"
+	"net"
 	"net/http"
 	"net/url"
 	"time"
@@ -13,8 +14,6 @@ const (
 	baseURL = "https://wttr.in/"
 
 	curlUserAgent = "curl/7.54.0"
-
-	httpTimeoutSeconds = 10
 )
 
 // WeathersText returns weathers for 3 days in plain text
@@ -39,7 +38,15 @@ func WeatherHTMLForToday(place string) (result string, err error) {
 
 func httpGet(url string, asHTML bool) (result string, err error) {
 	client := &http.Client{
-		Timeout: httpTimeoutSeconds * time.Second,
+		Transport: &http.Transport{
+			Dial: (&net.Dialer{
+				Timeout:   10 * time.Second,
+				KeepAlive: 10 * time.Second,
+			}).Dial,
+			TLSHandshakeTimeout:   5 * time.Second,
+			ResponseHeaderTimeout: 5 * time.Second,
+			ExpectContinueTimeout: 1 * time.Second,
+		},
 	}
 	var req *http.Request
 
