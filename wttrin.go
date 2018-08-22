@@ -41,10 +41,11 @@ func httpGet(url string, asHTML bool) (result string, err error) {
 		Transport: &http.Transport{
 			Dial: (&net.Dialer{
 				Timeout:   10 * time.Second,
-				KeepAlive: 10 * time.Second,
+				KeepAlive: 300 * time.Second,
 			}).Dial,
-			TLSHandshakeTimeout:   5 * time.Second,
-			ResponseHeaderTimeout: 5 * time.Second,
+			IdleConnTimeout:       90 * time.Second,
+			TLSHandshakeTimeout:   10 * time.Second,
+			ResponseHeaderTimeout: 10 * time.Second,
 			ExpectContinueTimeout: 1 * time.Second,
 		},
 	}
